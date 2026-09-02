@@ -1,0 +1,9 @@
+langgraph
+langchain
+langchain-openai
+mcp
+python-dotenv
+requests
+fastapi
+uvicorn
+psycopg[binary]
