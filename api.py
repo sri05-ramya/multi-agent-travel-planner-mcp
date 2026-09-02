@@ -1,11 +1,19 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
+from fastapi.middleware.cors import CORSMiddleware
 
 from main import app as travel_graph
 from database import save_trip, get_trips
 
 
 app = FastAPI(title="Multi-Agent Travel Planner API")
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:5174"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
 class TripRequest(BaseModel):
