@@ -38,19 +38,17 @@ Activity Agent → MCP → Activity Tool
 Final Planner Agent
    ↓
 PostgreSQL
+```
 
-Technologies Used:
+## Technologies Used
 
-Python
-LangGraph
-LangChain
-OpenAI
-MCP
-FastAPI
-Uvicorn
-PostgreSQL
-Psycopg
-Requests
-
-
-
+- Python
+- LangGraph
+- LangChain
+- OpenAI
+- MCP
+- FastAPI
+- Uvicorn
+- PostgreSQL
+- Psycopg
+- Requests
