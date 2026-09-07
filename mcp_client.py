@@ -17,10 +17,13 @@ async def get_weather_from_mcp(destination):
 
             result = await session.call_tool(
                 "weather_tool",
-                {"destination": destination}
+                {
+                    "destination": destination
+                }
             )
 
             return result.content[0].text
+
 
 async def get_hotels_from_mcp(destination):
 
@@ -36,9 +39,13 @@ async def get_hotels_from_mcp(destination):
 
             result = await session.call_tool(
                 "hotel_tool",
-                {"destination": destination}
+                {
+                    "destination": destination
+                }
             )
+
             return result.content[0].text
+
 
 async def get_activities_from_mcp(destination):
 
@@ -54,9 +61,33 @@ async def get_activities_from_mcp(destination):
 
             result = await session.call_tool(
                 "activity_tool",
-                {"destination": destination}
+                {
+                    "destination": destination
+                }
             )
 
-            return result.content[0].text        
-                            
-             
+            return result.content[0].text
+
+
+async def get_flights_from_mcp(origin, destination, departure_date):
+
+    server_params = StdioServerParameters(
+        command=sys.executable,
+        args=["mcp_server.py"]
+    )
+
+    async with stdio_client(server_params) as (read, write):
+        async with ClientSession(read, write) as session:
+
+            await session.initialize()
+
+            result = await session.call_tool(
+                "flight_tool",
+                {
+                    "origin": origin,
+                    "destination": destination,
+                    "departure_date": departure_date
+                }
+            )
+
+            return result.content[0].text

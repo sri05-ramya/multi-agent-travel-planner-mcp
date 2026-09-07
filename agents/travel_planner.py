@@ -6,23 +6,32 @@ class TripDetails(BaseModel):
     days: int
 
 
+class MultiTripDetails(BaseModel):
+    origin: str
+    start_date: str
+    trips: list[TripDetails]
+
+
 def travel_planner_agent(state, llm):
 
-    planner_llm = llm.with_structured_output(TripDetails)
+    planner_llm = llm.with_structured_output(MultiTripDetails)
 
     trip = planner_llm.invoke(
-        f"""
-        Read the user's travel request.
+    f"""
+    Read the user's travel request.
 
-        User request: {state['user_request']}
+    User request: {state['user_request']}
 
-        Extract:
-        - destination
-        - number of days
-        """
-    )
+    Extract:
+    - starting city
+    - trip start date in YYYY-MM-DD format
+    - every destination
+    - number of days for each destination
+    """
+)
 
     return {
-        "destination": trip.destination,
-        "days": trip.days
-    }
+    "origin": trip.origin,
+    "start_date": trip.start_date,
+    "trips": [item.model_dump() for item in trip.trips]
+}

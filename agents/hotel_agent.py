@@ -4,23 +4,38 @@ from mcp_client import get_hotels_from_mcp
 
 def hotel_agent(state, llm):
 
-    destination = state["destination"]
-    hotels = asyncio.run(get_hotels_from_mcp(destination))
-    days = state["days"]
+    trips = state["trips"]
 
-    response = llm.invoke(
-    f"""
-    The user is planning a {days}-day trip to {destination}.
+    hotel_results = []
 
-    Hotel search results:
-    {hotels}
+    for trip in trips:
 
-    Suggest 3 good hotel options or hotel areas for the trip.
-    Keep the answer short.
-    Do not make up live prices or availability.
-    """
-)
+        destination = trip["destination"]
+        days = trip["days"]
+
+        hotels = asyncio.run(
+            get_hotels_from_mcp(destination)
+        )
+
+        response = llm.invoke(
+            f"""
+            The user is planning a {days}-day trip to {destination}.
+
+            Hotel search results:
+            {hotels}
+
+            Suggest 3 good hotel options or hotel areas for the trip.
+            Keep the answer short.
+            Do not make up live prices or availability.
+            """
+        )
+
+        hotel_results.append({
+            "destination": destination,
+            "days": days,
+            "hotels": response.content
+        })
 
     return {
-        "hotels": response.content
+        "hotels": hotel_results
     }

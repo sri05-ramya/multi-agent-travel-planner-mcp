@@ -1,17 +1,17 @@
 def final_planner_agent(state, llm):
 
-    destination = state["destination"]
-    days = state["days"]
+    trips = state["trips"]
     weather = state["weather"]
     hotels = state["hotels"]
     activities = state["activities"]
+    flights = state["flights"]
 
     response = llm.invoke(
         f"""
-        Create a simple final travel plan.
+        Create a simple multi-city travel plan.
 
-        Destination: {destination}
-        Number of days: {days}
+        Trips:
+        {trips}
 
         Weather:
         {weather}
@@ -22,7 +22,12 @@ def final_planner_agent(state, llm):
         Activities:
         {activities}
 
-        Create a clear day-by-day travel plan.
+        Flights:
+        {flights}
+
+        Create a clear day-by-day travel plan for each destination.
+        Include the flight information between destinations.
+        Follow the number of days specified for each destination.
         Keep it easy to read.
         """
     )

@@ -4,33 +4,54 @@ from mcp_client import get_activities_from_mcp
 
 def activity_agent(state, llm):
 
-    destination = state["destination"]
-    days = state["days"]
-    weather = state["weather"]
+    trips = state["trips"]
+    weather_results = state["weather"]
 
-    activities = asyncio.run(
-        get_activities_from_mcp(destination)
-    )
+    activity_results = []
 
-    response = llm.invoke(
-        f"""
-        The user is planning a {days}-day trip to {destination}.
+    for trip in trips:
 
-        Weather:
-        {weather}
+        destination = trip["destination"]
+        days = trip["days"]
 
-        Activity search results:
-        {activities}
+        weather = next(
+            (
+                item["weather"]
+                for item in weather_results
+                if item["destination"] == destination
+            ),
+            "Weather unavailable"
+        )
 
-        Suggest suitable activities for this trip.
+        activities = asyncio.run(
+            get_activities_from_mcp(destination)
+        )
 
-        If the weather is rainy, prefer indoor activities.
-        If the weather is good, include outdoor activities.
+        response = llm.invoke(
+            f"""
+            The user is planning a {days}-day trip to {destination}.
 
-        Keep the answer short.
-        """
-    )
+            Weather:
+            {weather}
+
+            Activity search results:
+            {activities}
+
+            Suggest suitable activities for this trip.
+
+            If the weather is rainy, prefer indoor activities.
+            If the weather is good, include outdoor activities.
+
+            Keep the answer short.
+            """
+        )
+
+        activity_results.append({
+            "destination": destination,
+            "days": days,
+            "activities": response.content
+        })
 
     return {
-        "activities": response.content
+        "activities": activity_results
     }
